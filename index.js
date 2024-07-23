@@ -1,4 +1,5 @@
 const express = require('express');
+const HProcess = require("./header");
 const app = express();
 const http=require('http')
 const server=http.createServer(app)
@@ -40,37 +41,30 @@ main=async function(uri,req,res){
   var head="";
   var lock=1;
   return await fetch(uri,{method:req.method,headers:hhf,body:req.body}).then(r=>{
-    var fh=Object.fromEntries(r.headers)//[...r.headers.entries()].reduce((obj, [key, value]) => (obj[key] = value, obj), {});
-    /*if(headall["content-type"]){
-      var fh=//{"content-type":[...r.headers.entries()].reduce((obj, [key, value]) => (obj[key] = value, obj), {})["content-type"]}
+    var fh=HProcess(Object.fromEntries(r.headers))
+    res.writeHead(r.status,fh)
+    if(r.headers.get("location")){
+      console.log(r.headers)
+      main(r.headers.get("location"),req,res)
+      return new Promise(()=>lock=0)
     }else{
-      fh={};
-    }*/
-    //var fh=Object.fromEntries([...r.headers.entries()])
-    //if(req.url.search("baidu.com")!=-1){console.log([...r.headers.entries()].reduce((obj, [key, value]) => (obj[key] = value, obj), {}))}
-        res.writeHead(r.status,fh)
-        if(r.headers.get("location")){
-          console.log(r.headers)
-          main(r.headers.get("location"),req,res)
-          return new Promise(()=>lock=0)
-        }else{
-          console.log(r.headers.get("content-type"))
-          head=r.headers.get("content-type")
-          if(head&&head.includes("text/html")){
-            return r.text()
-          }
-          return r.arrayBuffer()
-        }
-      }).then(k=>{
-        if(lock){
-          if(head&&head.includes("text/html")){
-            res.end(dhtml+replac(k,uri))
-          }
-          else{
-            res.end(Buffer.from(k))
-          }
-        }
-      })
+      console.log(r.headers.get("content-type"))
+      head=r.headers.get("content-type")
+      if(head&&head.includes("text/html")){
+        return r.text()
+      }
+      return r.arrayBuffer()
+    }
+  }).then(k=>{
+    if(lock){
+      if(head&&head.includes("text/html")){
+        res.end(dhtml+replac(k,uri))
+      }
+      else{
+        res.end(Buffer.from(k))
+      }
+    }
+  })
 }
 
 replac=function(k,url){
