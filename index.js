@@ -4,7 +4,7 @@ const app = express();
 const http=require('http')
 const server=http.createServer(app)
 const {Buffer}=require('buffer');
-c="https://vpn.sifecleak.repl.co/"
+c = "https://cnhjvw-3000.csb.app/";
 app.use(function(req,res,next){
     res.setHeader("Access-Control-Allow-Origin","*")
     //res.setHeader("Content-Type","application/json")
@@ -21,7 +21,7 @@ app.use(function(req,res,next){
     }
 })
 app.use("/",(req,res)=>{
-  var uri=req.url.slice(1).replace("/","//")
+  var uri=req.url.slice(1)//.replace("/","//")
   console.log(uri)
   if(url_check(uri)){
     try{
