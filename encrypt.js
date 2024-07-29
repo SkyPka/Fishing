@@ -25,4 +25,4 @@
         return decodeURIComponent(atob(pack(data)));
     }
     return {decrypt:decrypt,encrypt:encrypt};
-})()
+})()//SkyPka enc#KC
